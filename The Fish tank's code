@@ -1,0 +1,168 @@
+import pygame
+import random
+pygame.init()
+screen = pygame.display.set_mode((500,1000))
+pygame.display.set_caption("Fish Tank")
+clock = pygame.time.Clock() #set up clock
+gameover = False
+
+
+shork1 = pygame.image.load('Sharpie1.png') #load your spritesheet
+shork2 = pygame.image.load('Sharpie2.png')
+shork_copy = shork1.copy()
+shork_flip = pygame.transform.flip(shork_copy, True, False)
+flip = 1
+
+
+
+#create a buncha empty lists
+
+sizes4 = []
+positions4 = []
+colors4 = []
+
+
+xPositions = []
+yPositions = []
+
+
+bx = 100 #X-Axis
+by = 200 #Y-Axis
+bVx = 5 #X Velocity
+bVy = 5 #Y Velocity
+
+
+
+for i in range(500):
+    xPositions.append(random.randrange(0, 1000))
+    yPositions.append(random.randrange(-1000, 0))
+
+class Bubble:
+    def __init__(self, x, y):
+        self.xpos = x
+        self.ypos = -y
+    def move(self):
+        self.xpos += random.randrange(-2, 3) # Left & Right
+        self.ypos -= random.randrange(0, 3) #Up & Down
+        if self.ypos <0:
+            self.ypos = random.randrange(1000, 1200)
+    def draw(self):
+        pygame.draw.circle(screen, (255, 255, 255), (self.xpos, self.ypos), 6) #draw bubble
+        pygame.draw.circle(screen, (93,171,227), (self.xpos, self.ypos), 4) #draw bubble
+
+
+#----------------------------------------------------------------------
+
+
+#create a bunch of snowflakes
+bubbleBag = []
+for i in range(100): #Amount
+    bubbleBag.append(Bubble(random.randrange(0, 1000), random.randrange(-800, 0))) #placement
+
+
+        
+    #---------------
+
+
+
+#PEBBLES
+for i in range(3000):
+    sizes4.append(random.randrange(5,10)) #push in 1 number
+    positions4.append((random.randrange(0, 800),random.randrange(800, 1000))) #push in a 2-slot TUPLE
+    colors4.append((random.randrange(150,175),random.randrange(164, 189),random.randrange(174,199))) #push in a 3-slot TUPLE
+    
+                                        #/\ This is the color.
+    
+
+while 1: #game loop###########################################################
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            Quit = True
+    clock.tick(15) #FPS
+
+
+
+
+
+    #physics section----
+    
+    #move flakes
+    for i in range(len(bubbleBag)):
+        bubbleBag[i].move()
+
+
+        #Fish Physics---
+        
+        
+    bx += bVx
+    by += bVy
+
+
+
+    if bx < 0: #left wall bounds checking
+        bVx *= -1#reflect!
+        flip = 1
+        
+        print("turning right")
+            
+    elif bx > 500: #right wall bounds checking
+        bVx *= -1 #reflect
+        flip = 2
+        
+        
+        print("turning left")
+
+            
+    if by < 0 or by > 800:#Floor Registration
+        bVy *= -1
+        print("bounce!")
+    
+
+
+    
+#split
+    
+
+    
+    #render section------------------------------
+    
+    screen.fill((93,171,227))# Clear the screen
+    
+    #Hitbox Finding
+    pygame.draw.circle(screen, (255, 255, 255), (bx, by), 15, 5)
+
+
+    
+
+    #draw the lines on the screen
+    
+    
+    screen.blit(shork2, (bx-260, by-160))
+
+    if flip == 1:
+        screen.blit(shork_flip, (50 + 1 * bx-260, by-160))
+    else:
+        screen.blit(shork1, (bx-260, by-160))
+
+
+   
+   #screen.blit(2fibsh3, (cx-10, cy-9))
+
+    
+    pygame.draw.rect(screen, (175, 189, 199), (0, 800 , 500, 500), 500)
+
+
+    pygame.draw.rect(screen, (150, 150, 150), (0, 0 , 500, 1000), 10)
+    for i in range(3000):#draw the gravel
+        pygame.draw.circle(screen, colors4[i], (positions4[i][0], positions4[i][1]), sizes4[i])
+    
+        
+    for i in range(len(bubbleBag)):
+        bubbleBag[i].draw()
+ 
+    
+    pygame.display.flip()# Update the display
+
+#end of game loop###################################################################
+pygame.quit()
+
